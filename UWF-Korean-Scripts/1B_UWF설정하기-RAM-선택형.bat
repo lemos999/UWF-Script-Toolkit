@@ -6,8 +6,7 @@ echo ==========================================================
 echo.
 echo == !!     경고     !! ==
 echo == RAM 모드는 시스템 메모리를 오버레이로 사용합니다. ==
-echo == 설정하는 크기만큼 RAM이 점유되며, 16GB, 32GB 같은 ==
-echo == 거대한 크기는 시스템을 불안정하게 만들 수 있습니다! ==
+echo == 설정하는 크기만큼 RAM이 점유되며, 매우 위험할 수 있습니다! ==
 echo == !! 반드시 [관리자 권한]으로 실행해야 합니다 !! ==
 echo.
 echo --- 1. 원하는 RAM 오버레이 크기를 선택하세요 (숫자만 입력) ---
@@ -39,14 +38,19 @@ if not defined overlay_size (
 )
 
 echo.
-echo --- 2. [ %overlay_size%MB ] 크기로 RAM 모드를 설정합니다 ---
+echo --- 2. [경고] 및 [요주의] 임계값을 자동으로 설정합니다... ---
+set /a default_warn = %overlay_size% * 80 / 100
+set /a default_crit = %overlay_size% * 95 / 100
+echo (1차 경고[80%%]: %default_warn%MB)
+echo (2차 경고[95%%]: %default_crit%MB)
+
+echo.
+echo --- 3. 설정 적용 중... ---
 uwfmgr.exe overlay set-type RAM
 uwfmgr.exe overlay set-size %overlay_size%
-
-echo --- 3. UWF 필터 기능을 켭니다 (재부팅 필요) ---
+uwfmgr.exe overlay set-warningthreshold %default_warn%
+uwfmgr.exe overlay set-criticalthreshold %default_crit%
 uwfmgr.exe filter enable
-
-echo --- 4. C: 드라이브를 보호하도록 설정합니다 (재부팅 필요) ---
 uwfmgr.exe volume protect C:
 
 echo.
@@ -54,8 +58,11 @@ echo ==========================================================
 echo           UWF [RAM 모드] 설정이 모두 '예약'되었습니다!
 echo ==========================================================
 echo.
-echo == 선택한 크기: %overlay_size%MB ==
-echo == (이 버전은 카톡/라인 예외가 없습니다. 필요시 '4번' 스크립트로 추가하세요.) ==
+echo == 선택한 크기: %overlay_size%MB
+echo == 1차 경고(80%%): %default_warn%MB
+echo == 2차 경고(95%%): %default_crit%MB
+echo.
+echo == (이 버전은 기본 예외가 없습니다. 필요시 '4번' 스크립트로 추가하세요.) ==
 echo == 지금 바로 컴퓨터를 [재부팅]하면 모든 설정이 적용됩니다. ==
 echo.
 pause

@@ -5,7 +5,6 @@ echo ==========================================================
 echo.
 echo == !!     WARNING     !! ==
 echo == RAM Mode uses your system's physical RAM as the overlay. ==
-echo == The size you set will be RESERVED from your total RAM. ==
 echo == Setting this too large (e.g., 16GB) CAN crash your system! ==
 echo == !! You MUST run this script as an [Administrator] !! ==
 echo.
@@ -38,14 +37,19 @@ if not defined overlay_size (
 )
 
 echo.
-echo --- 2. Setting Overlay to [RAM Mode] with [ %overlay_size%MB ] size ---
+echo --- 2. Automatically setting Warning and Critical thresholds... ---
+set /a default_warn = %overlay_size% * 80 / 100
+set /a default_crit = %overlay_size% * 95 / 100
+echo (Warning [80%%]: %default_warn%MB)
+echo (Critical [95%%]: %default_crit%MB)
+
+echo.
+echo --- 3. Applying settings... ---
 uwfmgr.exe overlay set-type RAM
 uwfmgr.exe overlay set-size %overlay_size%
-
-echo --- 3. Enabling UWF Filter (Requires Reboot) ---
+uwfmgr.exe overlay set-warningthreshold %default_warn%
+uwfmgr.exe overlay set-criticalthreshold %default_crit%
 uwfmgr.exe filter enable
-
-echo --- 4. Setting C: Drive to be Protected (Requires Reboot) ---
 uwfmgr.exe volume protect C:
 
 echo.
@@ -53,7 +57,10 @@ echo ==========================================================
 echo           UWF [RAM Mode] Setup is 'Scheduled'!
 echo ==========================================================
 echo.
-echo == Selected Size: %overlay_size%MB ==
+echo == Selected Size: %overlay_size%MB
+echo == Warning (80%%): %default_warn%MB
+echo == Critical (95%%): %default_crit%MB
+echo.
 echo == (This version has no default exclusions. Use script #4 to add your own.) ==
 echo == You must [REBOOT] your computer now to apply all settings. ==
 echo.

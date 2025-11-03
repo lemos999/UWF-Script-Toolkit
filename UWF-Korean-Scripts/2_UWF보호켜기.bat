@@ -10,7 +10,7 @@ echo.
 pause
 
 echo --- 1. UWF 필터 기능을 다시 켭니다 (재부팅 필요) ---
-echo --- (저장된 설정[Disk/RAM, 용량]을 그대로 불러옵니다) ---
+echo --- (저장된 설정[Disk/RAM, 용량, 임계값]을 그대로 불러옵니다) ---
 uwfmgr.exe filter enable
 
 echo.

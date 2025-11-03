@@ -5,7 +5,6 @@ echo ==========================================================
 echo.
 echo == !!     WARNING     !! ==
 echo == Disk Mode [pre-allocates] free space from your C: drive! ==
-echo == (e.g., Setting 30GB will reduce C: free space by 30GB) ==
 echo == !! Do NOT set a size larger than your C: drive's free space!! ==
 echo == !! You MUST run this script as an [Administrator] !! ==
 echo.
@@ -38,14 +37,19 @@ if not defined overlay_size (
 )
 
 echo.
-echo --- 2. Setting Overlay to [Disk Mode] with [ %overlay_size%MB ] size ---
+echo --- 2. Automatically setting Warning and Critical thresholds... ---
+set /a default_warn = %overlay_size% * 80 / 100
+set /a default_crit = %overlay_size% * 95 / 100
+echo (Warning [80%%]: %default_warn%MB)
+echo (Critical [95%%]: %default_crit%MB)
+
+echo.
+echo --- 3. Applying settings... ---
 uwfmgr.exe overlay set-type Disk
 uwfmgr.exe overlay set-size %overlay_size%
-
-echo --- 3. Enabling UWF Filter (Requires Reboot) ---
+uwfmgr.exe overlay set-warningthreshold %default_warn%
+uwfmgr.exe overlay set-criticalthreshold %default_crit%
 uwfmgr.exe filter enable
-
-echo --- 4. Setting C: Drive to be Protected (Requires Reboot) ---
 uwfmgr.exe volume protect C:
 
 echo.
@@ -53,7 +57,10 @@ echo ==========================================================
 echo           UWF [Disk Mode] Setup is 'Scheduled'!
 echo ==========================================================
 echo.
-echo == Selected Size: %overlay_size%MB ==
+echo == Selected Size: %overlay_size%MB
+echo == Warning (80%%): %default_warn%MB
+echo == Critical (95%%): %default_crit%MB
+echo.
 echo == (This version has no default exclusions. Use script #4 to add your own.) ==
 echo == You must [REBOOT] your computer now to apply all settings. ==
 echo.

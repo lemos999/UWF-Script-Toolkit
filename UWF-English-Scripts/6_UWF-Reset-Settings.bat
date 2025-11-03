@@ -20,7 +20,11 @@ echo --- 3. Resetting overlay to default [RAM, 1024MB] ---
 uwfmgr.exe overlay set-type RAM
 uwfmgr.exe overlay set-size 1024
 
-echo --- 4. (Note) This script does not auto-delete custom exclusions. ---
+echo --- 4. Resetting thresholds to default ---
+uwfmgr.exe overlay set-warningthreshold 512
+uwfmgr.exe overlay set-criticalthreshold 1024
+
+echo --- 5. (Note) This script does not auto-delete custom exclusions. ---
 echo ---    Please use [5_UWF-Remove-Exclusion.bat] to remove them manually. ---
 
 echo.

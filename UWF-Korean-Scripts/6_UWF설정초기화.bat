@@ -21,7 +21,11 @@ echo --- 3. 오버레이 설정을 [RAM, 1024MB] 기본값으로 되돌립니다
 uwfmgr.exe overlay set-type RAM
 uwfmgr.exe overlay set-size 1024
 
-echo --- 4. (참고) 이 스크립트는 %user_path%에 등록된 예외를 자동으로 지우지 않습니다. ---
+echo --- 4. 경고/요주의 임계값을 기본값으로 되돌립니다 ---
+uwfmgr.exe overlay set-warningthreshold 512
+uwfmgr.exe overlay set-criticalthreshold 1024
+
+echo --- 5. (참고) 이 스크립트는 %user_path%에 등록된 예외를 자동으로 지우지 않습니다. ---
 echo ---    필요시 [5_UWF예외제거.bat]로 직접 제거해주세요. ---
 
 echo.

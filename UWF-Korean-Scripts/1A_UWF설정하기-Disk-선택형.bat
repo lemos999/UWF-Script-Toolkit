@@ -6,7 +6,6 @@ echo ==========================================================
 echo.
 echo == !!     경고     !! ==
 echo == Disk 모드는 C드라이브의 여유 공간을 [미리 차지]합니다! ==
-echo == (예: 30GB 설정 시, C드라이브 남은 용량이 30GB 줄어듦) ==
 echo == !! [현재 C드라이브 여유 공간]보다 크게 설정하면 안 됩니다!! ==
 echo == !! 반드시 [관리자 권한]으로 실행해야 합니다 !! ==
 echo.
@@ -39,14 +38,19 @@ if not defined overlay_size (
 )
 
 echo.
-echo --- 2. [ %overlay_size%MB ] 크기로 Disk 모드를 설정합니다 ---
+echo --- 2. [경고] 및 [요주의] 임계값을 자동으로 설정합니다... ---
+set /a default_warn = %overlay_size% * 80 / 100
+set /a default_crit = %overlay_size% * 95 / 100
+echo (1차 경고[80%%]: %default_warn%MB)
+echo (2차 경고[95%%]: %default_crit%MB)
+
+echo.
+echo --- 3. 설정 적용 중... ---
 uwfmgr.exe overlay set-type Disk
 uwfmgr.exe overlay set-size %overlay_size%
-
-echo --- 3. UWF 필터 기능을 켭니다 (재부팅 필요) ---
+uwfmgr.exe overlay set-warningthreshold %default_warn%
+uwfmgr.exe overlay set-criticalthreshold %default_crit%
 uwfmgr.exe filter enable
-
-echo --- 4. C: 드라이브를 보호하도록 설정합니다 (재부팅 필요) ---
 uwfmgr.exe volume protect C:
 
 echo.
@@ -54,8 +58,11 @@ echo ==========================================================
 echo           UWF [Disk 모드] 설정이 모두 '예약'되었습니다!
 echo ==========================================================
 echo.
-echo == 선택한 크기: %overlay_size%MB ==
-echo == (이 버전은 카톡/라인 예외가 없습니다. 필요시 '4번' 스크립트로 추가하세요.) ==
+echo == 선택한 크기: %overlay_size%MB
+echo == 1차 경고(80%%): %default_warn%MB
+echo == 2차 경고(95%%): %default_crit%MB
+echo.
+echo == (이 버전은 기본 예외가 없습니다. 필요시 '4번' 스크립트로 추가하세요.) ==
 echo == 지금 바로 컴퓨터를 [재부팅]하면 모든 설정이 적용됩니다. ==
 echo.
 pause
