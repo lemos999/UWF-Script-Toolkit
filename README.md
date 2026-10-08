@@ -1,411 +1,309 @@
-# 🚀 Windows 11/10 UWF All-In-One Manager (v9)
+# 🚀 Windows 11/10 UWF All-in-One Manager
 
-This is a single, powerful script that allows you to manage Windows' **UWF (Unified Write Filter)** feature with a simple menu, no complex commands required.
+A bilingual Windows desktop app for inspecting and configuring Microsoft's **Unified Write Filter (UWF)**. Run the app without administrator rights to review system status and changes. The app shows an operation plan before requesting UAC approval to apply it.
 
-Instead of multiple files, you now only need to run **`UWF-Manager-Unified.bat`** for everything. The script will first ask you to select a language (English/Korean) and then provide a full menu of options.
+### 🎯 What This App Does
 
-### 🎯 What This Script Does
-
-*   **Makes Your PC Like a Public Lab Computer:** Resets your C: drive to a clean, initial state every time you reboot.
-*   **Provides Easy Management:** Handles all complex tasks like "Enable/Disable Protection," "Update/Persistent Mode," and "Reset Settings" through a simple, number-based menu.
-
----
-
-## ⛔ [MUST READ] Before You Start: Check 2 Things!
-
-### 1. Do I Have the Right Windows Version? (Crucial! ⭐️)
-
-UWF **ONLY** works on **Windows 11/10 Enterprise** or **Windows 11/10 Education** editions.
-It will **NOT** work on `Home` or `Pro` versions! (Even if the feature appears to install, it will not function. 😥)
-
-#### ✅ [How to Check Your Windows Version]
-
-1.  Press the `Win Key + R` to open the "Run" box.
-2.  Type `winver` and press Enter.
-3.  A small window will pop up. Check if it says "Windows 11 **Enterprise**" or "Windows 11 **Education**".
-4.  (If it says 'Home' or 'Pro', these scripts will not work for you. 😭)
-
-### 2. Run Scripts as Administrator!
-
-This script modifies core system settings. You **MUST** run it by **Right-Clicking -> Run as Administrator**. (Double-clicking normally will 100% cause an error!)
+* **Review UWF at a glance:** See feature availability, filter state, protected volumes, overlay settings, and current/next-session configuration.
+* **Configure protection:** Choose RAM or DISK overlay settings, set warning thresholds, and manage protected volumes.
+* **Manage exclusions:** Add and remove file, folder, and registry exclusions.
+* **Handle advanced operations:** Commit selected overlay changes, prepare Windows servicing, clean or reset UWF settings, and safely restart or shut down.
+* **Use either language:** Switch between English and Korean from the app.
 
 ---
 
-## 🤔 What is UWF, Anyway?
+## ⛔ Before You Start: Check These First
 
-In short, it's a feature that **"Makes your PC like a public library or school lab computer!"** 💻
+### 1. Use a Windows edition that supports UWF
 
-*   **[The Public Library/School Lab Analogy]**
-    You know how a computer at a public library or university lab is always clean? Even if you install a program or save files to the desktop, what happens when you reboot? Everything you did disappears, and the PC is back to its original, clean state.
-    UWF is the official Windows feature that does exactly that: **"Reboot to Restore"**.
+UWF is available on supported Windows Enterprise, Education, and IoT Enterprise editions. Availability can depend on the Windows image and configuration. It is not available on Home editions.
 
-*   **[The Glass Pane Analogy]**
-    Technically, it places a thin, transparent **'glass pane'** over your C: drive (the original data).
-    All changes you make (downloading files, installing programs) are written onto this 'glass pane', not your actual C: drive.
-    When you **reboot**, Windows simply **throws away** that dirty 'glass pane' and puts on a fresh, clean one.
+### 2. Keep a separate backup
 
-*   **[The Result]**
-    With a single reboot, your PC is **always back to its perfect, clean, initial state!** (Just like that library computer!)
+UWF is not a backup system or a malware sandbox. A restart can discard changes written to protected volumes, while excluded paths and unprotected volumes can retain changes. Keep important files backed up separately.
+
+### 3. Review every operation before applying it
+
+The app starts without elevation. Configuration and recovery actions show their commands and warnings first, then use Windows UAC when administrator rights are needed. Advanced actions can permanently commit data or restart/shut down the device.
 
 ---
 
-## ✨ So, What's This Good For?
+## 🤔 What Is UWF?
 
-1.  **[Highly Recommended] "Freezing" a Perfect State (Your Personal "Fresh-Start" PC)**
-    Right after a clean Windows format, install all your drivers, Steam, Discord, etc., to get your PC in its **"perfect, clean state"**. Then, use this script to turn on UWF.
-    From now on, even if you get a virus or the system gets slow, **one reboot** instantly restores that perfect, clean state. (It feels like using a brand new PC every day!)
+UWF protects selected volumes by redirecting writes to an overlay instead of immediately changing the protected volume.
 
-2.  **[Testing] Using Your PC Like a Safe Sandbox**
-    Ever wonder, "Is this file a virus?" or "Is this program safe to install?"
-    Just run it while UWF is active. Even if it's malware, **a simple reboot will make it vanish** as if it never existed. You can test anything without fear of breaking your system.
+* **While protection is on:** Changes written to protected volumes go to the overlay.
+* **After a restart:** Overlay changes are normally discarded.
+* **Exceptions and commits:** Excluded paths and changes explicitly committed from the overlay can persist.
 
----
-
-## 🧠 Disk Mode vs. RAM Mode (Your Key Choice!)
-
-You need to decide *where* to create that 'transparent glass pane' (the overlay). You will choose the one that fits your needs from the main menu during setup.
-
-### 1. Disk Mode (Select Menu `2. Setup UWF [Disk Mode]`)
-
-*   **What is it?:** It uses a piece of your C: drive's free space (e.g., 30GB) to create a large 'temporary storage file'.
-*   **👍 Pros:**
-    *   **Large Capacity:** You can set it to 30GB, 50GB, or more.
-    *   **Stability:** It can easily handle large game updates, shader caches, and other big temporary files without crashing.
-*   **👎 Cons:**
-    *   **Uses Drive Space:** A 30GB setting will "use up" 30GB of your C: drive's free space.
-*   **👉 Recommended For:** Gamers and users of heavy software (The most stable option!)
-
-### 2. RAM Mode (Select Menu `3. Setup UWF [RAM Mode]`)
-
-*   **What is it?:** It uses your computer's **actual RAM (memory)** (e.g., 4GB) as the 'temporary storage', not the C: drive.
-*   **👍 Pros:**
-    *   **Extreme Speed:** It's incredibly fast because it runs in RAM.
-    *   **SSD Protection:** It performs zero write operations to your C: drive, which is great for your SSD's lifespan.
-*   **👎 Cons:**
-    *   **Dangerous:** It **consumes your valuable system RAM**. (If you have 16GB of RAM and set an 8GB overlay, your PC only has 8GB left for Windows and games! 😥)
-    *   **Unstable:** If the overlay fills up, your **system may freeze or crash instantly**.
-*   **👉 Recommended For:** Light web-browsing PCs or advanced users who know exactly what they're doing.
+This behavior can help keep a device in a known state, but it does not prevent data loss or make unsafe software safe to run.
 
 ---
 
-## 🎮 How to Use "Persistent Mode" (For Game Updates!)
+## 🧠 Disk Mode vs. RAM Mode
 
-"UWF is on, but I need to update my Steam game!" (Time to be the System Administrator!)
-This is how you **permanently save changes** to your C: drive.
+Choose the overlay type based on the device's available storage, memory, and expected write workload.
 
-**[STEP 1] "Pause" Protection**
-1.  From the main menu, select **`5. [Disable] UWF Protection`** and run it.
-2.  When it's done, **Reboot** your PC. 🔄
+### 1. DISK Mode
 
-**[STEP 2] Do Your Work in "Persistent Mode"**
-1.  Your PC is now in a "normal" state where protection is off.
-2.  Install your Steam games, run Windows Updates, install new drivers... **do all the tasks you want to save permanently.**
-3.  Everything you do in this step **will be saved** to your C: drive.
+* **What it uses:** Free space on the Windows system volume for the overlay.
+* **Consider:** The system volume needs more free space than the configured overlay size. The app checks this before applying DISK settings.
+* **Often considered for:** Workloads with larger writes, such as software or game updates.
 
-**[STEP 3] "Resume" Protection**
-1.  When all your installations and updates are finished,
-2.  From the main menu, select **`4. [Enable] UWF Protection`** and run it.
-3.  When it's done, **Reboot** your PC. 🔄
+### 2. RAM Mode
 
-**Done!** 🎉
-Your PC is now back in its **fully protected mode**, but *with* all your new games and updates included! (The system maintenance is complete!)
+* **What it uses:** System memory for the overlay.
+* **Consider:** Memory assigned to the overlay is unavailable to Windows and other apps. If an overlay fills, the device may become unstable.
+* **Often considered for:** Devices with enough available memory and lighter write workloads.
+
+The app can suggest a starting size, but the right setting depends on the device and workload. Check overlay usage and available resources regularly.
 
 ---
 
-## 📜 Menu Guide
+## 🎮 First-Time Setup
 
-After launching the script and choosing your language, you will see the main menu. Here is what each option does:
+1. Run **UWFManager.exe**. The app does not request administrator rights just to start.
+2. Open **Status** and check the Windows edition, UWF feature, filter state, and current/next-session settings.
+3. If the UWF feature is missing, choose **Install UWF** from Home or Status, review the plan, and restart Windows after installation.
+4. Open **Setup**. Choose RAM or DISK, select the volumes to protect, review the overlay size and thresholds, then select **Apply setup plan**.
+5. Read the commands and warnings in the review window. Continue only if the plan matches your intent, then approve the UAC prompt.
+6. Restart Windows if the operation result says a restart is needed. Reopen **Status** to confirm the new state.
 
-### [STEP 1] Installation (Do this only once!)
+### 📜 Page Guide
 
-#### `1. Install UWF Feature (Run Once)`
-
-*   **What it does:** Installs the UWF feature itself onto Windows.
-*   **How to Use:** Select this option first. **You must reboot** after it completes.
-
-### [STEP 2] Initial Setup (Choose ONE of these, only once!)
-
-#### `2. Setup UWF [Disk Mode]` (Recommended for Gaming 🏗️)
-
-*   **What it does:** Sets up UWF in **[Disk Mode]** for the first time.
-*   **How to Use:** Select this option and **choose a size** for the Disk Overlay (20GB-80GB or custom) when prompted. **Reboot** to apply.
-
-#### `3. Setup UWF [RAM Mode]` (For Advanced Users 💽)
-
-*   **What it does:** Sets up UWF in **[RAM Mode]** for the first time.
-*   **How to Use:** Select this option and **choose a size** for the RAM Overlay (1GB-32GB or custom). Be careful not to use too much of your system RAM! **Reboot** to apply.
-
-### [STEP 3] Daily Use (Toggling On/Off)
-
-#### `4. [Enable] UWF Protection` (Enable Protection 💡)
-
-*   **What it does:** **Turns UWF protection back ON** using your saved settings.
-*   **How to Use:** Select this when you want to re-enable protection. **Reboot** to apply.
-
-#### `5. [Disable] UWF Protection` (Disable Protection 🔌)
-
-*   **What it does:** **Turns UWF protection OFF**, putting your PC into "Persistent Mode" for updates.
-*   **How to Use:** Select this *before* you want to install games/updates. **Reboot** to apply.
-
-### [STEP 4] Changing Settings (When Needed)
-
-#### `6. [Add] Exclusion Path` (Add Exclusion ➕)
-
-*   **What it does:** Adds a folder or file (like a game save folder) to the **"do not reset"** list.
-*   **How to Use:** Select this option and **paste a path** (e.g., `C:\MyGame\Saves`) when prompted. **Reboot** to apply.
-
-#### `7. [Remove] Exclusion Path` (Remove Exclusion ➖)
-
-*   **What it does:** **Removes** a folder or file from the "do not reset" list.
-*   **How to Use:** Select this option and **paste the exact path** you want to remove. **Reboot** to apply.
-
-### [STEP 5] Management & Reset
-
-#### `8. [Reset] All UWF Settings` (Factory Reset 🚨)
-
-*   **What it does:** **Deletes all your custom settings** (Disk/RAM mode, size, all exclusions) and returns UWF to its 'factory default' state (and disables it).
-*   **How to Use:** Select this when you want to start fresh or remove UWF. **Reboot** to apply.
-
-#### `9. [Check] Current UWF Status` (Check Status 🔍)
-
-*   **What it does:** Shows your current UWF settings ("Current Session") and what will be applied after reboot ("Next Session").
-*   **How to Use:** Select this anytime to see what's going on.
-
-### Other Options
-
-*   `99. Back to Language Selection`: Returns you to the initial language selection screen.
-*   `0. Exit`: Closes the script.
+* **Home:** First-use guidance, recommendations, and quick actions.
+* **Status:** Current and next-session UWF settings, with refresh and report export.
+* **Setup:** Overlay type and size, protected volumes, warning thresholds, and filter controls.
+* **Exclusions:** File/folder and registry exclusion lists.
+* **Advanced:** Commit overlay changes, service Windows, clean or reset UWF, and restart/shutdown actions.
+* **Activity:** Recent operation results, which you can copy or clear.
 
 ---
 
-## ⌨️ [Reference] Key Commands
+## 💾 Keeping Selected Changes
 
-These scripts are just friendly managers for the real commands below. (All require Admin rights).
+### Exclusions
 
-*   Install Feature: `DISM /Online /Enable-Feature /FeatureName:Client-UnifiedWriteFilter`
-*   Enable Filter: `uwfmgr.exe filter enable`
-*   Disable Filter: `uwfmgr.exe filter disable`
-*   Protect Drive: `uwfmgr.exe volume protect C:`
-*   Set Overlay Type: `uwfmgr.exe overlay set-type <Disk|RAM>`
-*   Set Overlay Size: `uwfmgr.exe overlay set-size <MB>` (e.g., `30720`)
-*   Add File Exclusion: `uwfmgr.exe file add-exclusion "C:\Path"`
-*   Remove File Exclusion: `uwfmgr.exe file remove-exclusion "C:\Path"`
-*   Check Config: `uwfmgr.exe get-config`
-*   Servicing Mode: `uwfmgr.exe servicing enable` (A special mode just for Windows Updates)
+Add only the file, folder, or registry paths that must keep their changes across restarts. Exclusions can preserve writes, but they do not reduce overlay use. Keep the scope narrow and verify each path before applying it.
+
+### Commit from the overlay
+
+The Advanced page can commit a selected file, file deletion, registry key, or registry value from the overlay to the protected volume. A commit makes that selected change persistent. Review the target and operation plan carefully before continuing.
+
+### Windows servicing
+
+Use the Windows servicing action when preparing UWF for Windows updates. Follow the app's instructions, make sure user accounts meet Windows servicing requirements, and keep the device powered on while servicing runs.
+
+---
+
+## ⚠️ Important Behavior
+
+* Changing the overlay type or size requires the filter to be off in the current session. The app refreshes status before planning those changes.
+* A DISK overlay uses free space on the Windows system volume, not the selected protected volume.
+* Some settings are staged for the next session and do not take effect until Windows restarts. Check the current and next-session values on **Status**.
+* Unprotecting a volume or turning the filter off changes what UWF protects. Confirm the selected volumes and plan before applying.
+* Reset, full-off, cleanup, commit, restart, and shutdown actions can have lasting effects. Read each review window before continuing.
+* Unexpected UI exceptions are logged to **%LOCALAPPDATA%\PortableUwfManager\logs\crash.log**.
+
+---
+
+## 🧑‍💻 Build and Self-Test
+
+On Windows, run these commands from the repository folder in PowerShell:
+
+~~~powershell
+.\Build.cmd
+~~~
+
+To build and run the included self-check:
+
+~~~powershell
+.\Build.cmd -SelfTest
+~~~
+
+The normal build refreshes **bin\Release\UWFManager.exe** and the portable **UWFManager.exe** with its configuration file in the repository root. You can also open **UWFManager.csproj** in Visual Studio or build it with MSBuild. The project targets .NET Framework 4.8 and Windows Forms. Direct project builds may require the .NET Framework 4.8 Developer Pack; **Build.cmd** uses the installed Framework C# compiler and does not require external packages.
+
+### Source Files
+
+* **MainForm.cs**, **UiDialogs.cs:** Main window, pages, styles, and review dialogs.
+* **UwfController.cs**, **UwfModels.cs:** UWF plans, command execution, and status models.
+* **SafetyRules.cs**, **VolumeSelection.cs**, **SystemSizing.cs:** Input checks, volume selection, and overlay sizing guidance.
+* **Program.cs**, **Localization.cs**, **SelfTest.cs:** App startup, UAC handoff, language text, and self-checks.
+
+---
+
+## 📚 Microsoft References
+
+* [UWF overview and supported editions](https://learn.microsoft.com/en-gb/windows/configuration/unified-write-filter/)
+* [UWF command-line tool](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwfmgrexe)
+* [UWF overlay](https://learn.microsoft.com/en-au/windows/configuration/unified-write-filter/uwfoverlay)
+* [Set overlay type](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-overlayconfigsettype)
+* [Set overlay size](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-overlayconfigsetmaximumsize)
+* [UWF servicing mode and Windows updates](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-servicingupdatewindows)
 
 ---
 
 ## 🧑‍💻 Creator Info
 
-*   Created by: fewweekslater
-*   GitHub: [https://github.com/lemos999](https://github.com/lemos999)
-*   Email: lemoaxtoria@gmail.com
-*   Support: [https://ctee.kr/place/fewweekslater](https://ctee.kr/place/fewweekslater)
-
----
----
----
-
-# 🚀 윈도우 11/10 UWF 통합 관리 스크립트 (v9)
-
-이것은 윈도우의 강력한 **'시스템 초기화(UWF)'** 기능을 복잡한 명령어 없이 간편한 메뉴 방식으로 관리해주는 단 하나의 스크립트입니다.
-
-이제 여러 개의 파일 대신 **`UWF-Manager-Unified.bat`** 파일 하나만 실행하면 모든 것을 해결할 수 있습니다. 스크립트를 실행하면 먼저 언어(한글/영어)를 선택하고, 그 후에 모든 기능이 담긴 메뉴가 나타납니다.
-
-### 🎯 이 스크립트가 해주는 일
-
-*   **PC방 컴퓨터처럼 만들기:** 재부팅할 때마다 C드라이브를 항상 깨끗한 초기 상태로 되돌려줍니다.
-*   **간편한 관리:** '보호 켜기/끄기', '게임 설치/업데이트 모드', '설정 초기화' 등 복잡한 모든 작업을 간단한 숫자 메뉴를 통해 해결해줍니다.
+* Created by: fewweekslater
+* GitHub: [https://github.com/lemos999](https://github.com/lemos999)
+* Email: lemoaxtoria@gmail.com
+* Support: [https://ctee.kr/place/fewweekslater](https://ctee.kr/place/fewweekslater)
 
 ---
 
-## ⛔ [필독] 시작하기 전, 딱 2가지만 확인해!
-
-### 1. 내 윈도우 버전이 맞나? (가장 중요! ⭐️)
-
-UWF는 오직 **윈도우 11/10 Enterprise(엔터프라이즈)** 또는 **Education(교육용)** 에디션에서만 작동합니다.
-`Home(홈)`, `Pro(프로)` 버전에선 **절대 작동하지 않습니다!** (기능이 설치되는 것처럼 보여도 실제로는 동작하지 않아요 😥)
-
-#### ✅ [내 PC가 Enterprise 버전인지 확인하는 법]
-
-1.  키보드에서 `Win 키 + R 키`를 눌러 '실행' 창을 엽니다.
-2.  `winver` 라고 입력하고 엔터를 칩니다.
-3.  작은 창이 뜨면, 'Windows 11 **Enterprise**' 또는 'Windows 11 **Education**'이라고 쓰여 있는지 확인합니다.
-4.  (만약 'Home'이나 'Pro'라고 쓰여있다면... 아쉽지만 이 스크립트는 작동하지 않습니다 😭)
-
-### 2. 스크립트 실행은 [관리자 권한]으로!
-
-이 스크립트는 윈도우의 핵심 설정을 변경하므로, 반드시 파일에 **마우스 오른쪽 클릭 -> [관리자 권_권한으로 실행]**을 눌러야 합니다. (그냥 더블클릭하면 100% 오류가 납니다!)
+---
 
 ---
 
-## 🤔 UWF가 도대체 뭐야?
+# 🚀 윈도우 11/10 UWF 통합 관리자
 
-쉽게 말해 **"PC방 컴퓨터처럼 만드는"** 기능입니다! 🎮
+Microsoft **UWF(Unified Write Filter)** 를 확인하고 설정하는 한국어/영어 Windows 데스크톱 앱입니다. 관리자 권한 없이 앱을 실행해 현재 상태와 변경 계획을 확인할 수 있습니다. 계획을 검토한 뒤 UAC 승인을 받아 작업을 적용합니다.
 
-*   **[PC방]**
-    PC방에서 컴퓨터를 켜면 깨끗하죠? 하지만 게임을 설치하고 바탕화면에 파일을 마구 저장하다가, 컴퓨터를 껐다 켜면? 내가 설치한 게임이나 파일이 싹 사라지고 원래의 깨끗한 상태로 돌아옵니다.
-    UWF가 바로 그 '재부팅 초기화' 기능을 윈도우에 기본으로 넣어주는 것입니다.
+### 🎯 이 앱으로 할 수 있는 일
 
-*   **[유리판]**
-    조금 더 자세히 말하면, 당신의 C드라이브(원본) 위에 아주 얇은 **'투명 유리판'**을 덮는 것입니다.
-    컴퓨터를 쓰면서 생기는 모든 변경사항(파일 다운로드, 프로그램 설치)은 C드라이브 원본이 아닌, 그 '투명 유리판' 위에만 임시로 기록됩니다.
-    그리고 재부팅하면, 그 더러워진 '투명 유리판'을 통째로 버리고 깨끗한 새 유리판으로 갈아 끼우는 것이죠.
-
-*   **[결론]**
-    재부팅 한 번이면, 당신의 PC는 **언제나 완벽하게 깨끗한 초기 상태로 돌아옵니다!** (PC방처럼!)
+* **UWF 한눈에 보기:** 기능 설치 여부, 필터 상태, 보호 볼륨, 오버레이 설정, 현재/다음 세션 설정을 확인합니다.
+* **보호 설정:** RAM/DISK 오버레이와 경고 기준을 설정하고 보호 볼륨을 관리합니다.
+* **예외 관리:** 파일·폴더 및 레지스트리 예외를 추가하거나 제거합니다.
+* **고급 작업:** 오버레이 변경 커밋, Windows 서비스 준비, UWF 정리·초기화, 안전한 재시작·종료 작업을 실행합니다.
+* **언어 전환:** 앱에서 한국어와 English를 바꿀 수 있습니다.
 
 ---
 
-## ✨ 그래서 이걸 어디에 써?
+## ⛔ 시작 전 확인하세요
 
-1.  **[강력 추천] '완벽한 상태' 고정용 (나만의 PC방 만들기)**
-    포맷 직후, 윈도우/드라이버/스팀/카톡 등 모든 필수 설치를 마친 '최상의 클린 상태'에서 이 스크립트로 UWF를 딱 켜 보세요.
-    이제 컴퓨터가 바이러스에 걸리거나 느려져도, 재부팅 한 번이면 언제나 이 완벽한 상태로 즉시 돌아올 수 있습니다. (매일 PC방 새 자리 쓰는 기분!)
+### 1. UWF를 지원하는 Windows 에디션인지 확인하세요
 
-2.  **[테스트용] 안전한 '가상 PC'처럼 쓰기**
-    "이 파일 바이러스 아냐?", "이 프로그램 깔아도 되나?"처럼 의심스러운 걸 확인할 때 UWF를 켠 상태로 실행해 보세요.
-    그게 악성 코드라도, 재부팅하면 '없던 일'처럼 깨끗하게 사라집니다. 시스템 망가질 걱정 없이 마음껏 테스트할 수 있습니다!
+UWF는 지원되는 Windows Enterprise, Education, IoT Enterprise 에디션에서 사용할 수 있습니다. 실제 사용 가능 여부는 Windows 이미지와 구성에 따라 달라질 수 있으며 Home 에디션에서는 사용할 수 없습니다.
 
----
+### 2. 중요한 데이터는 별도로 백업하세요
 
-## 🧠 Disk 모드 vs RAM 모드 (핵심 선택!)
+UWF는 백업 도구나 악성 코드 실행용 샌드박스가 아닙니다. 재시작하면 보호 볼륨에 기록된 변경이 사라질 수 있지만, 예외 경로와 보호되지 않는 볼륨의 변경은 남을 수 있습니다. 중요한 파일은 별도로 백업하세요.
 
-'투명 유리판(오버레이)'을 어디에 만들지 정하는 것입니다. 당신의 용도에 맞는 것을 메뉴에서 딱 한 번만 골라서 설정하면 됩니다.
+### 3. 적용 전 작업 계획을 확인하세요
 
-### 1. Disk 모드 (메뉴 `2. UWF 설정하기 [Disk 모드]` 선택)
-
-*   **이게 뭐야?:** C드라이브의 여유 공간을 떼어(예: 30GB) 거대한 '임시 저장 파일'을 만듭니다.
-*   **👍 장점:**
-    *   **넉넉한 용량:** 30GB, 50GB처럼 아주 크게 설정할 수 있습니다.
-    *   **안정성:** 게임 업데이트, 셰이더 캐시 등 용량 큰 작업도 재부팅 전까지 넉넉하게 버텨줍니다.
-*   **👎 단점:**
-    *   **C드라이브 공간 차지:** 설정한 30GB만큼 C드라이브 용량이 미리 줄어듭니다.
-*   **👉 추천 대상:** 게이밍 PC, 무거운 프로그램 사용자 (가장 안정적!)
-
-### 2. RAM 모드 (메뉴 `3. UWF 설정하기 [RAM 모드]` 선택)
-
-*   **이게 뭐야?:** C드라이브가 아닌, 당신의 실제 RAM(메모리)을 떼어(예: 4GB) '임시 저장소'로 씁니다.
-*   **👍 장점:**
-    *   **최고 속도:** RAM에서 작동해서 엄청나게 빠릅니다.
-    *   **SSD 보호:** C드라이브에 쓰기 작업을 전혀 안 해서 저장 장치 수명에 좋습니다.
-*   **👎 단점:**
-    *   **위험함:** 당신 PC의 소중한 RAM을 그대로 차지합니다. (16GB RAM PC에서 8GB 설정 시, 윈도우와 게임은 남은 8GB RAM으로 버텨야 합니다 😥)
-    *   **불안정:** 용량이 꽉 차면 시스템이 즉시 멈추거나 강제 재부팅될 수 있습니다.
-*   **👉 추천 대상:** 가벼운 웹서핑용 PC, 혹은 자신이 뭘 하는지 정확히 아는 고급 사용자
+앱은 관리자 권한 없이 시작합니다. 설정·복구 작업은 명령과 경고를 먼저 보여주고, 관리자 권한이 필요하면 Windows UAC를 요청합니다. 고급 작업은 데이터를 영구 반영하거나 장치를 재시작·종료할 수 있습니다.
 
 ---
 
-## 🎮 "영구 저장 모드" 사용법 (가장 자주 쓸 기능!)
+## 🤔 UWF란?
 
-"보호 상태인데... 스팀 게임 업데이트해야 해!" (PC방 사장님이 자리 관리하듯이!)
-이럴 때 쓰는, 변경 사항을 C드라이브에 진짜로 저장하는 방법입니다.
+UWF는 선택된 볼륨의 쓰기 작업을 오버레이로 보내 보호 볼륨 자체가 바로 바뀌지 않도록 합니다.
 
-**[1단계] 보호 '일시 정지'하기**
-1.  메인 메뉴에서 **`5. UWF 보호 [끄기]`**를 선택하여 실행합니다.
-2.  작업이 끝나면 컴퓨터를 **재부팅**합니다. 🔄
+* **보호가 켜져 있을 때:** 보호 볼륨에 대한 변경은 오버레이에 기록됩니다.
+* **재시작 후:** 오버레이에 쌓인 변경은 일반적으로 폐기됩니다.
+* **예외와 커밋:** 예외로 지정한 경로와 오버레이에서 명시적으로 커밋한 변경은 유지될 수 있습니다.
 
-**[2단계] '영구 저장 모드'에서 할 일 하기**
-1.  이제 PC는 보호가 풀린 '일반 PC' 상태입니다.
-2.  스팀 게임 설치, 윈도우 업데이트, 드라이버 설치 등... **영구적으로 저장하고 싶은 모든 작업을 마음껏 합니다.**
-3.  이때 한 모든 작업은 C드라이브에 영구적으로 저장됩니다.
-
-**[3단계] 보호 '다시 시작'하기**
-1.  모든 설치/업데이트가 끝났으면,
-2.  메인 메뉴에서 **`4. UWF 보호 [켜기]`**를 선택하여 실행합니다.
-3.  작업이 끝나면 컴퓨터를 **재부팅**합니다. 🔄
-
-**끝!** 🎉
-이제 PC는 당신이 새로 설치한 게임을 포함한 상태로, 다시 완벽하게 보호 모드(초기화 모드)로 돌아갑니다! (PC방 사장님이 새 게임 설치 완료!)
+UWF는 장치를 일정한 상태로 유지하는 데 도움을 줄 수 있지만, 데이터 손실을 막거나 안전하지 않은 프로그램을 안전하게 만들지는 않습니다.
 
 ---
 
-## 📜 메뉴 기능 상세 설명
+## 🧠 DISK 모드와 RAM 모드
 
-스크립트를 실행하고 언어를 선택하면 메인 메뉴가 나타납니다. 각 메뉴 항목이 하는 일은 다음과 같습니다.
+장치의 저장 공간, 메모리, 예상 쓰기량에 맞춰 오버레이 유형을 선택하세요.
 
-### [1단계] 설치 (맨 처음 딱 한 번!)
+### 1. DISK 모드
 
-#### `1. UWF 기능 설치 (최초 1회)`
+* **사용 공간:** Windows 시스템 볼륨의 여유 공간을 오버레이에 사용합니다.
+* **확인할 점:** 시스템 볼륨에는 설정한 오버레이 크기보다 더 많은 여유 공간이 필요합니다. 앱은 DISK 설정 적용 전에 이를 확인합니다.
+* **사용 사례:** 프로그램이나 게임 업데이트처럼 쓰기량이 많은 작업에 고려할 수 있습니다.
 
-*   **뭐야?:** 윈도우에 UWF 기능 자체를 설치합니다.
-*   **작동:** 가장 먼저 이 메뉴를 선택하세요. 작업 완료 후 반드시 **재부팅**해야 합니다!
+### 2. RAM 모드
 
-### [2단계] 초기 설정 (둘 중 하나만 골라서 딱 한 번!)
+* **사용 공간:** 시스템 메모리를 오버레이에 사용합니다.
+* **확인할 점:** 오버레이가 사용하는 메모리는 Windows와 다른 앱이 사용할 수 없습니다. 오버레이가 가득 차면 장치가 불안정해질 수 있습니다.
+* **사용 사례:** 메모리 여유가 충분하고 쓰기량이 비교적 적은 환경에 고려할 수 있습니다.
 
-#### `2. UWF 설정하기 [Disk 모드]` (게이밍 PC 권장 🏗️)
-
-*   **뭐야?:** UWF를 **[Disk 모드]**로 처음 세팅해 줍니다.
-*   **작동:** 이 메뉴를 선택하고, 안내에 따라 원하는 Disk 오버레이 크기(20GB~80GB 또는 직접 입력)를 선택하세요. 적용을 위해 **재부팅**이 필요합니다.
-
-#### `3. UWF 설정하기 [RAM 모드]` (고급자용 💽)
-
-*   **뭐야?:** UWF를 **[RAM 모드]**로 처음 세팅해 줍니다.
-*   **작동:** 이 메뉴를 선택하고, 원하는 RAM 오버레이 크기(1GB~32GB 또는 직접 입력)를 선택하세요. (시스템 RAM 용량을 초과하지 않게 주의!) 적용을 위해 **재부팅**이 필요합니다.
-
-### [3단계] 평상시 사용 (껐다 켰다)
-
-#### `4. UWF 보호 [켜기]` (켜기 스크립트 💡)
-
-*   **뭐야?:** 저장해 둔 설정(Disk든 RAM이든)을 그대로 불러와서 보호를 다시 켤 때 씁니다.
-*   **작동:** 보호를 다시 켜고 싶을 때 선택하세요. 적용을 위해 **재부팅**이 필요합니다.
-
-#### `5. UWF 보호 [끄기]` (끄기 스크립트 🔌)
-
-*   **뭐야?:** UWF 보호를 비활성화해서 업데이트 등을 위한 '영구 저장 모드'로 만들 때 씁니다.
-*   **작동:** 게임 설치/업데이트 전에 선택하세요. 적용을 위해 **재부팅**이 필요합니다.
-
-### [4단계] 세부 설정 변경 (필요할 때)
-
-#### `6. UWF [예외 경로 추가]` (예외 경로 추가 ➕)
-
-*   **뭐야?:** 재부팅해도 '얼려지지 않을' 폴더나 파일(예: 게임 세이브, 카톡 데이터)을 추가할 때 씁니다.
-*   **작동:** 메뉴 선택 후, 예외로 만들 경로(예: `C:\MyGame\Saves`)를 붙여넣으세요. 적용을 위해 **재부팅**이 필요합니다.
-
-#### `7. UWF [예외 경로 제거]` (예외 경로 제거 ➖)
-
-*   **뭐야?:** 예외로 설정했던 폴더나 파일을 다시 제거할 때 씁니다.
-*   **작동:** 메뉴 선택 후, 제거할 정확한 경로를 붙여넣으세요. 적용을 위해 **재부팅**이 필요합니다.
-
-### [5단계] 관리 및 초기화
-
-#### `8. UWF [모든 설정 초기화]` (공장 초기화 🚨)
-
-*   **뭐야?:** 당신이 설정한 모든 UWF 설정값(Disk/RAM, 용량, 예외)을 전부 삭제하고, 윈도우 '순정' 상태(비활성화)로 되돌려 줍니다.
-*   **작동:** 처음부터 다시 설정하고 싶을 때 사용하세요. 적용을 위해 **재부팅**이 필요합니다.
-
-#### `9. UWF [현재 설정 확인]` (상태 확인 🔍)
-
-*   **뭐야?:** 지금 내 UWF 설정 상태가 어떤지 ("현재 세션" / "다음 세션") 자세히 보여줍니다.
-*   **작동:** 설정이 잘 적용되었는지 궁금할 때 언제든 확인하세요.
-
-### 기타 메뉴
-
-*   `99. 언어 선택으로 돌아가기`: 처음의 한글/영어 선택 화면으로 돌아갑니다.
-*   `0. 종료`: 스크립트를 닫습니다.
+앱이 시작 용량을 추천할 수 있지만, 적절한 설정은 장치와 사용량에 따라 다릅니다. 오버레이 사용량과 남은 자원을 주기적으로 확인하세요.
 
 ---
 
-## ⌨️ [참고] 주요 명령어 목록
+## 🎮 처음 설정하는 순서
 
-이 스크립트들은 사실 아래 명령어들을 대신 실행해주는 것입니다. (`< >` 안의 값은 상황에 맞게 변경)
+1. **UWFManager.exe**를 실행합니다. 앱 시작만으로 관리자 권한을 요구하지 않습니다.
+2. **상태**에서 Windows 에디션, UWF 기능, 필터 상태, 현재/다음 세션 설정을 확인합니다.
+3. UWF 기능이 없다면 **홈** 또는 **상태**에서 **UWF 기능 설치**를 선택합니다. 계획을 확인하고 설치 후 Windows를 다시 시작합니다.
+4. **설정**에서 RAM 또는 DISK, 보호 볼륨, 오버레이 크기와 경고 기준을 선택한 뒤 **설정 계획 적용**을 누릅니다.
+5. 검토 창의 명령과 경고를 읽습니다. 계획이 의도와 맞을 때 계속하고 UAC를 승인합니다.
+6. 작업 결과에 재시작이 필요하다고 표시되면 Windows를 다시 시작합니다. 이후 **상태**에서 적용 결과를 확인합니다.
 
-*   기능 설치: `DISM /Online /Enable-Feature /FeatureName:Client-UnifiedWriteFilter`
-*   기능 켜기: `uwfmgr.exe filter enable`
-*   기능 끄기: `uwfmgr.exe filter disable`
-*   드라이브 보호: `uwfmgr.exe volume protect C:`
-*   오버레이 설정: `uwfmgr.exe overlay set-type <Disk|RAM>`
-*   오버레이 크기: `uwfmgr.exe overlay set-size <MB>` (예: `30720`)
-*   예외 파일 추가: `uwfmgr.exe file add-exclusion "경로"` (예: `"C:\Data"`)
-*   예외 파일 제거: `uwfmgr.exe file remove-exclusion "경로"`
-*   설정 확인: `uwfmgr.exe get-config`
-*   서비스 모드: `uwfmgr.exe servicing enable` (윈도우 자동 업데이트 전용 모드)
+### 📜 화면 안내
+
+* **홈:** 첫 사용 안내, 추천 설정, 빠른 작업
+* **상태:** 현재와 다음 세션의 UWF 설정, 새로고침 및 보고서 내보내기
+* **설정:** 오버레이 유형·크기, 보호 볼륨, 경고 기준, 필터 제어
+* **예외:** 파일·폴더 및 레지스트리 예외 목록
+* **고급:** 오버레이 변경 커밋, Windows 서비스, UWF 정리·초기화, 재시작·종료 작업
+* **활동 기록:** 최근 작업 결과 확인, 복사, 지우기
+
+---
+
+## 💾 필요한 변경만 유지하기
+
+### 예외 경로
+
+재시작 후에도 변경을 유지해야 하는 파일·폴더·레지스트리 경로만 추가하세요. 예외는 쓰기를 보존할 수 있지만 오버레이 사용량을 줄이지는 않습니다. 범위를 좁게 지정하고 적용 전에 경로를 확인하세요.
+
+### 오버레이에서 커밋
+
+고급 화면에서 오버레이의 파일, 파일 삭제, 레지스트리 키 또는 값을 보호 볼륨에 커밋할 수 있습니다. 커밋한 변경은 영구적으로 유지됩니다. 계속하기 전에 대상과 작업 계획을 꼼꼼히 확인하세요.
+
+### Windows 서비스
+
+Windows 업데이트를 위해 UWF 서비스 작업을 준비할 때 Windows 서비스 기능을 사용하세요. 앱 안내를 따르고, 사용자 계정이 Windows 서비스 요구 사항을 충족하는지 확인하며, 작업이 진행되는 동안 장치 전원을 유지하세요.
+
+---
+
+## ⚠️ 중요한 동작
+
+* 오버레이 유형이나 크기를 바꾸려면 현재 세션에서 필터가 꺼져 있어야 합니다. 앱은 계획을 만들기 전에 상태를 다시 확인합니다.
+* DISK 오버레이는 선택한 보호 볼륨이 아니라 Windows 시스템 볼륨의 여유 공간을 사용합니다.
+* 일부 설정은 다음 세션에 예약되며 Windows 재시작 후 적용됩니다. **상태**에서 현재 값과 다음 세션 값을 확인하세요.
+* 볼륨 보호 해제나 필터 끄기는 UWF가 보호하는 범위를 바꿉니다. 적용 전에 볼륨과 작업 계획을 확인하세요.
+* 초기화, 전체 끄기, 공간 정리, 커밋, 재시작, 종료 작업은 되돌리기 어려운 영향을 줄 수 있습니다. 계속하기 전에 검토 창을 읽으세요.
+* 예기치 않은 UI 예외는 **%LOCALAPPDATA%\PortableUwfManager\logs\crash.log**에 기록됩니다.
+
+---
+
+## 🧑‍💻 빌드 및 자체 점검
+
+Windows에서 PowerShell을 열고 저장소 폴더에서 실행합니다.
+
+~~~powershell
+.\Build.cmd
+~~~
+
+내장 자체 점검을 빌드하고 실행하려면 다음 명령을 사용합니다.
+
+~~~powershell
+.\Build.cmd -SelfTest
+~~~
+
+일반 빌드는 **bin\Release\UWFManager.exe**와 저장소 루트의 휴대용 **UWFManager.exe** 및 설정 파일을 갱신합니다. Visual Studio에서 **UWFManager.csproj**를 열거나 MSBuild로 빌드할 수도 있습니다. 프로젝트는 .NET Framework 4.8과 Windows Forms를 사용합니다. 프로젝트 파일을 직접 빌드하려면 .NET Framework 4.8 Developer Pack이 필요할 수 있습니다. **Build.cmd**는 설치된 Framework C# 컴파일러를 사용하며 외부 패키지는 필요하지 않습니다.
+
+### 소스 파일
+
+* **MainForm.cs**, **UiDialogs.cs:** 메인 창, 화면, 스타일, 검토 대화상자
+* **UwfController.cs**, **UwfModels.cs:** UWF 작업 계획, 명령 실행, 상태 모델
+* **SafetyRules.cs**, **VolumeSelection.cs**, **SystemSizing.cs:** 입력 검증, 볼륨 선택, 오버레이 용량 안내
+* **Program.cs**, **Localization.cs**, **SelfTest.cs:** 앱 시작, UAC 연결, 언어 문자열, 자체 점검
+
+---
+
+## 📚 Microsoft 참고 문서
+
+* [UWF 개요 및 지원 에디션](https://learn.microsoft.com/en-gb/windows/configuration/unified-write-filter/)
+* [UWF 명령줄 도구](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwfmgrexe)
+* [UWF 오버레이](https://learn.microsoft.com/en-au/windows/configuration/unified-write-filter/uwfoverlay)
+* [오버레이 유형 설정](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-overlayconfigsettype)
+* [오버레이 크기 설정](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-overlayconfigsetmaximumsize)
+* [UWF 서비스 모드와 Windows 업데이트](https://learn.microsoft.com/en-us/windows/configuration/unified-write-filter/uwf-servicingupdatewindows)
 
 ---
 
 ## 🧑‍💻 제작자 정보
 
-*   제작자: fewweekslater
-*   깃허브: [https://github.com/lemos999](https://github.com/lemos999)
-*   이메일: lemoaxtoria@gmail.com
-*   후원: [https://ctee.kr/place/fewweekslater](https://ctee.kr/place/fewweekslater)
+* 제작자: fewweekslater
+* GitHub: [https://github.com/lemos999](https://github.com/lemos999)
+* 이메일: lemoaxtoria@gmail.com
+* 후원: [https://ctee.kr/place/fewweekslater](https://ctee.kr/place/fewweekslater)
