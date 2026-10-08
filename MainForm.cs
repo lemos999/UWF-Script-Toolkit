@@ -76,8 +76,8 @@ namespace PortableUwfManager
             helpTip.ReshowDelay = 100;
 
             Text = UiText.T("포터블 UWF 관리자", "Portable UWF Manager");
-            Width = 1280;
-            Height = 840;
+            Width = 1300;
+            Height = 860;
             MinimumSize = new Size(1040, 680);
             StartPosition = FormStartPosition.CenterScreen;
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -139,22 +139,22 @@ namespace PortableUwfManager
             root.Padding = Padding.Empty;
             root.ColumnCount = 2;
             root.RowCount = 1;
-            root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 224F));
+            root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 228F));
             root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             Controls.Add(root);
             shellRoot = root;
 
-            var sidebar = new Panel();
+            var sidebar = new PastelGradientPanel(UiTheme.Sidebar, Color.FromArgb(248, 242, 251), UiTheme.SidebarEnd, 0);
             sidebar.Dock = DockStyle.Fill;
-            sidebar.BackColor = UiTheme.Sidebar;
             root.Controls.Add(sidebar, 0, 0);
 
             var sidebarLayout = new TableLayoutPanel();
             sidebarLayout.Dock = DockStyle.Fill;
-            sidebarLayout.Padding = new Padding(14, 16, 14, 14);
+            sidebarLayout.Padding = new Padding(16, 24, 16, 18);
+            sidebarLayout.BackColor = Color.Transparent;
             sidebarLayout.ColumnCount = 1;
             sidebarLayout.RowCount = 3;
-            sidebarLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 74F));
+            sidebarLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
             sidebarLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             sidebarLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             sidebar.Controls.Add(sidebarLayout);
@@ -163,7 +163,8 @@ namespace PortableUwfManager
             brand.Dock = DockStyle.Fill;
             brand.ColumnCount = 2;
             brand.RowCount = 1;
-            brand.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 42F));
+            brand.BackColor = Color.Transparent;
+            brand.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 48F));
             brand.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             sidebarLayout.Controls.Add(brand, 0, 0);
 
@@ -171,10 +172,11 @@ namespace PortableUwfManager
             brandMark.Text = "U";
             brandMark.Dock = DockStyle.Fill;
             brandMark.TextAlign = ContentAlignment.MiddleCenter;
-            brandMark.Font = UiTheme.LargeBoldFont;
-            brandMark.ForeColor = Color.White;
-            brandMark.BackColor = UiTheme.Primary;
-            brandMark.Margin = new Padding(0, 3, 10, 11);
+            brandMark.Font = new Font("Georgia", 19F, FontStyle.Bold);
+            brandMark.ForeColor = UiTheme.Primary;
+            brandMark.BackColor = UiTheme.Lavender;
+            brandMark.Margin = new Padding(0, 4, 10, 14);
+            brandMark.Tag = "badge";
             brand.Controls.Add(brandMark, 0, 0);
 
             var brandText = new Label();
@@ -191,7 +193,8 @@ namespace PortableUwfManager
             navigationPanel.WrapContents = false;
             navigationPanel.AutoScroll = true;
             navigationPanel.Margin = Padding.Empty;
-            navigationPanel.Padding = new Padding(0, 8, 0, 0);
+            navigationPanel.Padding = new Padding(0, 14, 0, 0);
+            navigationPanel.BackColor = Color.Transparent;
             sidebarLayout.Controls.Add(navigationPanel, 0, 1);
 
             navigationButtons.Clear();
@@ -207,29 +210,38 @@ namespace PortableUwfManager
             versionLabel.Dock = DockStyle.Fill;
             versionLabel.TextAlign = ContentAlignment.MiddleLeft;
             versionLabel.ForeColor = UiTheme.Muted;
-            versionLabel.Padding = new Padding(3, 0, 0, 0);
+            versionLabel.Padding = new Padding(10, 0, 0, 0);
+            versionLabel.Font = UiTheme.SmallBoldFont;
             sidebarLayout.Controls.Add(versionLabel, 0, 2);
 
             var content = new TableLayoutPanel();
             content.Dock = DockStyle.Fill;
-            content.Padding = new Padding(24, 18, 24, 14);
+            content.Padding = new Padding(26, 22, 26, 14);
+            content.BackColor = UiTheme.Canvas;
             content.ColumnCount = 1;
             content.RowCount = 4;
-            content.RowStyles.Add(new RowStyle(SizeType.Absolute, 78F));
+            content.RowStyles.Add(new RowStyle(SizeType.Absolute, 112F));
             content.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            content.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             content.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
-            content.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
             root.Controls.Add(content, 1, 0);
+
+            var headerFrame = new PastelGradientPanel(UiTheme.Lavender, UiTheme.Blush, UiTheme.Cream, 18);
+            headerFrame.Dock = DockStyle.Fill;
+            headerFrame.Margin = new Padding(0, 0, 0, 14);
+            headerFrame.Padding = new Padding(22, 13, 18, 9);
+            content.Controls.Add(headerFrame, 0, 0);
 
             var header = new TableLayoutPanel();
             header.Dock = DockStyle.Fill;
+            header.BackColor = Color.Transparent;
             header.ColumnCount = 2;
             header.RowCount = 2;
             header.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             header.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 284F));
-            header.RowStyles.Add(new RowStyle(SizeType.Absolute, 35F));
+            header.RowStyles.Add(new RowStyle(SizeType.Absolute, 43F));
             header.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            content.Controls.Add(header, 0, 0);
+            headerFrame.Controls.Add(header);
 
             pageTitleLabel = new Label();
             pageTitleLabel.Dock = DockStyle.Fill;
@@ -248,7 +260,8 @@ namespace PortableUwfManager
             headerActions.Dock = DockStyle.Fill;
             headerActions.FlowDirection = FlowDirection.RightToLeft;
             headerActions.WrapContents = false;
-            headerActions.Padding = new Padding(0, 6, 0, 0);
+            headerActions.Padding = new Padding(0, 8, 0, 0);
+            headerActions.BackColor = Color.Transparent;
             runAsAdminButton = CreateButton(UiText.T("관리자 실행", "Run as admin"), RelaunchAsAdmin);
             headerActions.Controls.Add(runAsAdminButton);
             ConfigureLanguageBox();
@@ -261,7 +274,8 @@ namespace PortableUwfManager
             statusStrip.Dock = DockStyle.Fill;
             statusStrip.FlowDirection = FlowDirection.LeftToRight;
             statusStrip.WrapContents = false;
-            statusStrip.Padding = new Padding(0, 1, 0, 0);
+            statusStrip.Padding = new Padding(2, 4, 0, 0);
+            statusStrip.BackColor = UiTheme.Canvas;
             ConfigureBadge(adminLabel);
             ConfigureBadge(uwfLabel);
             ConfigureBadge(osLabel);
@@ -287,6 +301,7 @@ namespace PortableUwfManager
 
             var busyStrip = new TableLayoutPanel();
             busyStrip.Dock = DockStyle.Fill;
+            busyStrip.BackColor = UiTheme.Canvas;
             busyStrip.ColumnCount = 2;
             busyStrip.RowCount = 1;
             busyStrip.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
@@ -318,10 +333,10 @@ namespace PortableUwfManager
             var button = new Button();
             button.Text = text;
             button.Tag = "navigation";
-            button.Width = 194;
-            button.Height = 42;
-            button.Margin = new Padding(0, 2, 0, 4);
-            button.Padding = new Padding(12, 0, 8, 0);
+            button.Width = 192;
+            button.Height = 46;
+            button.Margin = new Padding(0, 2, 0, 5);
+            button.Padding = new Padding(14, 0, 8, 0);
             button.TextAlign = ContentAlignment.MiddleLeft;
             button.FlatStyle = FlatStyle.Flat;
             button.FlatAppearance.BorderSize = 0;
@@ -403,9 +418,10 @@ namespace PortableUwfManager
         private static void ConfigureBadge(Label label)
         {
             label.Dock = DockStyle.None;
-            label.Height = 26;
-            label.Margin = new Padding(0, 0, 8, 0);
-            label.Padding = new Padding(8, 0, 8, 0);
+            label.Height = 28;
+            label.Margin = new Padding(0, 0, 9, 0);
+            label.Padding = new Padding(10, 0, 10, 0);
+            label.Tag = "badge";
             label.TextAlign = ContentAlignment.MiddleCenter;
             label.BorderStyle = BorderStyle.None;
             label.AutoEllipsis = true;
@@ -439,17 +455,28 @@ namespace PortableUwfManager
             RefreshStatus();
         }
 
+        private static Control CreateCard(Control content, Padding padding)
+        {
+            var card = new SoftCardPanel();
+            card.Dock = DockStyle.Fill;
+            card.Margin = new Padding(4, 3, 8, 8);
+            card.Padding = padding;
+            content.Dock = DockStyle.Fill;
+            card.Controls.Add(content);
+            return card;
+        }
+
         private TabPage BuildQuickStartTab()
         {
             var page = new TabPage(UiText.T("빠른 시작", "Quick start"));
             var root = new TableLayoutPanel();
             root.Dock = DockStyle.Fill;
-            root.Padding = new Padding(16);
+            root.Padding = new Padding(4, 4, 4, 4);
             root.ColumnCount = 2;
             root.RowCount = 3;
             root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210F));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 166F));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 64F));
             page.Controls.Add(root);
@@ -458,13 +485,13 @@ namespace PortableUwfManager
                 UiText.T(
                     "처음 쓰는 순서\r\n\r\n1. 상태 확인: UWF 기능과 관리자 권한 상태를 먼저 봅니다.\r\n2. UWF 기능이 없으면 설치 후 재부팅합니다.\r\n3. 잘 모르겠으면 RAM 추천값을 먼저 사용합니다. RAM은 가볍고 관리가 단순합니다.\r\n4. 게임/패치처럼 쓰기량이 크면 DISK 추천값을 검토합니다.\r\n5. 적용 전에는 항상 작업 계획을 확인하고, 적용 후 재부팅하세요.",
                     "First-use flow\r\n\r\n1. Check status first: verify UWF feature and administrator state.\r\n2. If UWF is missing, install the feature and reboot.\r\n3. If unsure, start with the RAM recommendation. RAM mode is lightweight and simpler.\r\n4. For heavy writes such as game patches, review the DISK recommendation.\r\n5. Always review the operation plan before applying, then reboot."));
-            root.Controls.Add(guide, 0, 0);
+            root.Controls.Add(CreateCard(guide, new Padding(22, 17, 18, 13)), 0, 0);
 
             var buttons = new FlowLayoutPanel();
             buttons.Dock = DockStyle.Fill;
             buttons.FlowDirection = FlowDirection.TopDown;
             buttons.WrapContents = false;
-            buttons.Controls.Add(CreateButton(UiText.T("1. 상태 확인", "1. Check status"), RefreshStatus));
+            buttons.Controls.Add(CreatePrimaryButton(UiText.T("1. 상태 확인", "1. Check status"), RefreshStatus));
             buttons.Controls.Add(CreateButton(UiText.T("2. 관리자 실행", "2. Run as admin"), RelaunchAsAdmin));
             buttons.Controls.Add(CreateButton(UiText.T("3. UWF 기능 설치", "3. Install UWF"), InstallFeature));
             root.Controls.Add(buttons, 1, 0);
@@ -473,7 +500,7 @@ namespace PortableUwfManager
                 UiText.T(
                     "추천 기준\r\n\r\nRAM 모드: 재부팅하면 변경이 사라지는 보호 환경에 적합합니다. 저장해야 하는 설정은 예외나 커밋으로 따로 관리하세요.\r\n\r\nDISK 모드: 쓰기량이 큰 환경에 맞지만 C: 여유 공간을 사용합니다. 여유 공간이 부족하면 큰 값을 피하세요.\r\n\r\n예외: overlay를 줄이는 기능이 아닙니다. 반드시 보존해야 하는 작은 설정/데이터에만 쓰세요.",
                     "Recommendation rules\r\n\r\nRAM mode: best for a protected environment where changes disappear after reboot. Persist needed settings through exclusions or commits.\r\n\r\nDISK mode: better for heavy writes, but it uses free space on C:. Avoid large values when free space is low.\r\n\r\nExclusions: they do not reduce overlay usage. Use them only for small settings/data that must persist."));
-            root.Controls.Add(beginner, 0, 1);
+            root.Controls.Add(CreateCard(beginner, new Padding(22, 16, 18, 13)), 0, 1);
 
             var recommendButtons = new FlowLayoutPanel();
             recommendButtons.Dock = DockStyle.Fill;
@@ -481,12 +508,14 @@ namespace PortableUwfManager
             recommendButtons.WrapContents = false;
             recommendButtons.Controls.Add(CreateButton(UiText.T("RAM 추천값 넣기", "Use RAM recommendation"), UseRecommendedRam));
             recommendButtons.Controls.Add(CreateButton(UiText.T("DISK 추천값 넣기", "Use DISK recommendation"), UseRecommendedDisk));
-            recommendButtons.Controls.Add(CreateButton(UiText.T("설정 탭으로 이동", "Go to setup"), GoToSetup));
+            recommendButtons.Controls.Add(CreatePrimaryButton(UiText.T("설정 탭으로 이동", "Go to setup"), GoToSetup));
             root.Controls.Add(recommendButtons, 1, 1);
 
             var bottom = new Label();
             bottom.Dock = DockStyle.Fill;
             bottom.TextAlign = ContentAlignment.MiddleLeft;
+            bottom.ForeColor = UiTheme.Muted;
+            bottom.Padding = new Padding(14, 0, 0, 0);
             bottom.Text = UiText.T("안전장치: 위험 예외 경로는 차단하고, 변경 작업은 먼저 계획을 보여준 뒤 실행합니다.",
                 "Safety: risky exclusion paths are blocked, and every change shows a plan before execution.");
             root.Controls.Add(bottom, 0, 2);
@@ -514,18 +543,18 @@ namespace PortableUwfManager
             left.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             root.Controls.Add(left, 0, 0);
 
-            var summaryCard = new Panel();
+            var summaryCard = new SoftCardPanel();
             summaryCard.Dock = DockStyle.Fill;
             summaryCard.BackColor = UiTheme.Surface;
-            summaryCard.Padding = new Padding(12);
+            summaryCard.Padding = new Padding(16);
             summaryCard.Margin = new Padding(0, 0, 12, 10);
             summaryCard.Controls.Add(BuildDashboardSummary());
             left.Controls.Add(summaryCard, 0, 0);
 
-            var reportCard = new Panel();
+            var reportCard = new SoftCardPanel();
             reportCard.Dock = DockStyle.Fill;
             reportCard.BackColor = UiTheme.Surface;
-            reportCard.Padding = new Padding(10);
+            reportCard.Padding = new Padding(14);
             reportCard.Margin = new Padding(0, 0, 12, 0);
             statusBox.Dock = DockStyle.Fill;
             reportCard.Controls.Add(statusBox);
@@ -536,7 +565,7 @@ namespace PortableUwfManager
             buttons.FlowDirection = FlowDirection.TopDown;
             buttons.WrapContents = false;
             buttons.Padding = new Padding(8, 0, 0, 0);
-            buttons.Controls.Add(CreateButton(UiText.T("새로고침", "Refresh"), RefreshStatus));
+            buttons.Controls.Add(CreatePrimaryButton(UiText.T("새로고침", "Refresh"), RefreshStatus));
             buttons.Controls.Add(CreateButton(UiText.T("보고서 복사", "Copy report"), CopyStatus));
             buttons.Controls.Add(CreateButton(UiText.T("보고서 내보내기", "Export report"), ExportStatus));
             buttons.Controls.Add(CreateButton(UiText.T("UWF 기능 설치", "Install UWF feature"), InstallFeature));
@@ -608,7 +637,7 @@ namespace PortableUwfManager
             heading.Text = title;
             heading.Dock = DockStyle.Fill;
             heading.Padding = new Padding(8, 0, 8, 0);
-            heading.BackColor = UiTheme.Canvas;
+            heading.BackColor = UiTheme.Badge;
             heading.ForeColor = UiTheme.Text;
             heading.Font = UiTheme.SmallBoldFont;
             heading.TextAlign = ContentAlignment.MiddleLeft;
@@ -637,7 +666,7 @@ namespace PortableUwfManager
             {
                 label.Text = textOrKey;
                 helpTip.SetToolTip(label, textOrKey);
-                label.BackColor = UiTheme.Canvas;
+                label.BackColor = UiTheme.Surface;
                 label.ForeColor = UiTheme.Muted;
                 label.Font = UiTheme.SmallBoldFont;
             }
@@ -661,9 +690,16 @@ namespace PortableUwfManager
             root.AutoScroll = true;
             root.ColumnCount = 2;
             root.RowCount = 8;
-            root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180F));
+            root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 186F));
             root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            page.Controls.Add(root);
+            for (int row = 0; row < 6; row++)
+            {
+                root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            }
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 66F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
+            root.BackColor = UiTheme.Surface;
+            page.Controls.Add(CreateCard(root, new Padding(3, 3, 3, 3)));
 
             overlayTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;
             var previousOverlayType = Convert.ToString(overlayTypeBox.SelectedItem);
@@ -727,9 +763,11 @@ namespace PortableUwfManager
             var buttons = new FlowLayoutPanel();
             buttons.Dock = DockStyle.Fill;
             buttons.FlowDirection = FlowDirection.LeftToRight;
+            buttons.WrapContents = true;
+            buttons.AutoScroll = true;
             buttons.Controls.Add(CreateButton(UiText.T("RAM 추천값", "RAM recommendation"), UseRecommendedRam));
             buttons.Controls.Add(CreateButton(UiText.T("DISK 추천값", "DISK recommendation"), UseRecommendedDisk));
-            buttons.Controls.Add(CreateButton(UiText.T("설정 계획 적용", "Apply setup plan"), ApplySetup));
+            buttons.Controls.Add(CreatePrimaryButton(UiText.T("설정 계획 적용", "Apply setup plan"), ApplySetup));
             buttons.Controls.Add(CreateButton(UiText.T("필터 켜기", "Enable filter"), EnableFilter));
             buttons.Controls.Add(CreateButton(UiText.T("필터 끄기", "Disable filter"), DisableFilter));
             buttons.Controls.Add(CreateButton(UiText.T("DISK 공간 정리", "Clean DISK space"), CleanupDiskOverlaySpace));
@@ -878,7 +916,8 @@ namespace PortableUwfManager
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 132F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            page.Controls.Add(root);
+            root.BackColor = UiTheme.Surface;
+            page.Controls.Add(CreateCard(root, new Padding(3, 3, 3, 3)));
 
             root.Controls.Add(CreateSectionLabel(UiText.T("폴더/파일 예외", "Folder or file exclusion")), 0, 0);
             fileExclusionBox.Dock = DockStyle.Fill;
@@ -961,9 +1000,10 @@ namespace PortableUwfManager
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
-            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 76F));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 126F));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            page.Controls.Add(root);
+            root.BackColor = UiTheme.Surface;
+            page.Controls.Add(CreateCard(root, new Padding(3, 3, 3, 3)));
 
             root.Controls.Add(CreateSectionLabel(UiText.T("오버레이의 파일 변경을 보호 볼륨에 커밋", "Commit a file from overlay to the protected volume")), 0, 0);
             commitFileBox.Dock = DockStyle.Fill;
@@ -993,6 +1033,8 @@ namespace PortableUwfManager
             root.Controls.Add(CreateSectionLabel(UiText.T("서비스 모드 및 복구", "Servicing and recovery")), 0, 7);
             var recoveryButtons = new FlowLayoutPanel();
             recoveryButtons.Dock = DockStyle.Fill;
+            recoveryButtons.WrapContents = true;
+            recoveryButtons.AutoScroll = true;
             recoveryButtons.Controls.Add(CreateButton(UiText.T("서비스 모드 끄기", "Disable servicing"), DisableServicing));
             recoveryButtons.Controls.Add(CreateButton(UiText.T("Windows 업데이트", "Update Windows"), UpdateWindows));
             recoveryButtons.Controls.Add(CreateButton(UiText.T("UWF 설정 초기화", "Reset UWF settings"), ResetSettings));
@@ -1022,7 +1064,8 @@ namespace PortableUwfManager
             root.RowCount = 2;
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            page.Controls.Add(root);
+            root.BackColor = UiTheme.Surface;
+            page.Controls.Add(CreateCard(root, new Padding(3, 3, 3, 3)));
 
             var actions = new FlowLayoutPanel();
             actions.Dock = DockStyle.Fill;
@@ -1089,7 +1132,7 @@ namespace PortableUwfManager
             var box = new TextBox();
             box.Dock = DockStyle.Fill;
             box.Multiline = true;
-            box.ScrollBars = ScrollBars.None;
+            box.ScrollBars = ScrollBars.Vertical;
             box.WordWrap = true;
             box.ReadOnly = true;
             box.BackColor = UiTheme.Surface;
@@ -1106,10 +1149,17 @@ namespace PortableUwfManager
             button.Text = text;
             button.AutoSize = true;
             button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            button.MinimumSize = new Size(150, 30);
+            button.MinimumSize = new Size(150, 36);
             button.Margin = new Padding(4);
             button.Click += delegate { action(); };
             helpTip.SetToolTip(button, text);
+            return button;
+        }
+
+        private Button CreatePrimaryButton(string text, Action action)
+        {
+            var button = CreateButton(text, action);
+            button.Tag = "primary";
             return button;
         }
 
@@ -1118,6 +1168,8 @@ namespace PortableUwfManager
             var label = new Label();
             label.Text = labelText;
             label.Dock = DockStyle.Fill;
+            label.ForeColor = UiTheme.Muted;
+            label.Font = UiTheme.BodyBoldFont;
             label.TextAlign = ContentAlignment.MiddleLeft;
             table.Controls.Add(label, 0, row);
             control.Dock = DockStyle.Left;

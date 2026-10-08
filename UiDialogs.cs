@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
@@ -13,29 +14,82 @@ using System.Windows.Forms;
 
 namespace PortableUwfManager
 {
+    // A quiet, warm palette shared by the main window and the safety dialogs.
     internal static class UiTheme
     {
-        public static readonly Color Canvas = Color.FromArgb(246, 248, 251);
-        public static readonly Color Sidebar = Color.FromArgb(250, 251, 253);
+        public static readonly Color Canvas = Color.FromArgb(249, 248, 251);
+        public static readonly Color Sidebar = Color.FromArgb(245, 240, 250);
+        public static readonly Color SidebarEnd = Color.FromArgb(253, 247, 244);
         public static readonly Color Surface = Color.White;
-        public static readonly Color Text = Color.FromArgb(31, 41, 55);
-        public static readonly Color Muted = Color.FromArgb(107, 114, 128);
-        public static readonly Color Primary = Color.FromArgb(37, 99, 235);
-        public static readonly Color Selected = Color.FromArgb(232, 240, 255);
-        public static readonly Color Hover = Color.FromArgb(237, 242, 249);
-        public static readonly Color Border = Color.FromArgb(225, 231, 239);
-        public static readonly Color Badge = Color.FromArgb(239, 243, 248);
-        public static readonly Color Success = Color.FromArgb(231, 246, 238);
-        public static readonly Color Warning = Color.FromArgb(255, 246, 221);
-        public static readonly Font BodyFont = new Font("Segoe UI", 9F);
-        public static readonly Font BodyBoldFont = new Font("Segoe UI", 9F, FontStyle.Bold);
+        public static readonly Color Text = Color.FromArgb(49, 45, 63);
+        public static readonly Color Muted = Color.FromArgb(110, 107, 125);
+        public static readonly Color Primary = Color.FromArgb(103, 82, 144);
+        public static readonly Color PrimaryHover = Color.FromArgb(85, 64, 125);
+        public static readonly Color Selected = Color.FromArgb(231, 222, 247);
+        public static readonly Color Hover = Color.FromArgb(240, 233, 248);
+        public static readonly Color Border = Color.FromArgb(228, 222, 235);
+        public static readonly Color Badge = Color.FromArgb(241, 237, 247);
+        public static readonly Color Success = Color.FromArgb(227, 244, 235);
+        public static readonly Color Warning = Color.FromArgb(255, 244, 226);
+        public static readonly Color Lavender = Color.FromArgb(232, 220, 249);
+        public static readonly Color Blush = Color.FromArgb(251, 230, 238);
+        public static readonly Color Cream = Color.FromArgb(255, 244, 222);
+
+        public static readonly Font BodyFont = new Font("Segoe UI", 9.5F);
+        public static readonly Font BodyBoldFont = new Font("Segoe UI", 9.5F, FontStyle.Bold);
         public static readonly Font SmallBoldFont = new Font("Segoe UI", 8.5F, FontStyle.Bold);
-        public static readonly Font SectionFont = new Font("Segoe UI", 9F, FontStyle.Bold);
-        public static readonly Font BrandFont = new Font("Segoe UI", 11F, FontStyle.Bold);
-        public static readonly Font LargeBoldFont = new Font("Segoe UI", 17F, FontStyle.Bold);
-        public static readonly Font TitleFont = new Font("Segoe UI", 18F, FontStyle.Bold);
+        public static readonly Font SectionFont = new Font("Segoe UI", 10F, FontStyle.Bold);
+        public static readonly Font BrandFont = new Font("Segoe UI", 12F, FontStyle.Bold);
+        public static readonly Font LargeBoldFont = new Font("Segoe UI", 18F, FontStyle.Bold);
+        public static readonly Font TitleFont = new Font("Segoe UI", 19F, FontStyle.Bold);
         public static readonly Font GuideFont = new Font("Segoe UI", 10F);
         public static readonly Font ConsoleFont = new Font("Consolas", 9F);
+
+        public static GraphicsPath RoundedPath(Rectangle bounds, int radius)
+        {
+            var path = new GraphicsPath();
+            int diameter = Math.Min(radius * 2, Math.Min(bounds.Width, bounds.Height));
+            if (diameter <= 1)
+            {
+                path.AddRectangle(bounds);
+                return path;
+            }
+
+            path.AddArc(bounds.Left, bounds.Top, diameter, diameter, 180, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Top, diameter, diameter, 270, 90);
+            path.AddArc(bounds.Right - diameter, bounds.Bottom - diameter, diameter, diameter, 0, 90);
+            path.AddArc(bounds.Left, bounds.Bottom - diameter, diameter, diameter, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
+
+        public static void SetRoundedRegion(Control control, int radius)
+        {
+            if (control.Width < 2 || control.Height < 2)
+            {
+                return;
+            }
+
+            using (var path = RoundedPath(new Rectangle(0, 0, control.Width, control.Height), radius))
+            {
+                var oldRegion = control.Region;
+                control.Region = new Region(path);
+                if (oldRegion != null)
+                {
+                    oldRegion.Dispose();
+                }
+            }
+        }
+
+        private static void RoundButtonOnResize(object sender, EventArgs e)
+        {
+            SetRoundedRegion((Control)sender, 10);
+        }
+
+        private static void RoundBadgeOnResize(object sender, EventArgs e)
+        {
+            SetRoundedRegion((Control)sender, 10);
+        }
 
         public static void Apply(Control root)
         {
@@ -44,7 +98,8 @@ namespace PortableUwfManager
                 return;
             }
 
-            if (root is Form || root is TabPage || root is TableLayoutPanel || root is FlowLayoutPanel || root is Panel || root is TabControl)
+            if (root is Form || root is TabPage || root is TableLayoutPanel ||
+                root is FlowLayoutPanel || root is Panel || root is TabControl)
             {
                 if (root.BackColor == SystemColors.Control)
                 {
@@ -55,24 +110,39 @@ namespace PortableUwfManager
             var button = root as Button;
             if (button != null)
             {
-                bool navigationButton = String.Equals(button.Tag as string, "navigation", StringComparison.Ordinal);
+                bool navigation = String.Equals(button.Tag as string, "navigation", StringComparison.Ordinal);
+                bool primary = String.Equals(button.Tag as string, "primary", StringComparison.Ordinal);
                 button.FlatStyle = FlatStyle.Flat;
-                button.FlatAppearance.BorderColor = Border;
-                button.FlatAppearance.BorderSize = navigationButton ? 0 : 1;
-                button.FlatAppearance.MouseOverBackColor = Hover;
-                button.BackColor = navigationButton ? Sidebar : Surface;
-                button.ForeColor = Text;
+                button.UseVisualStyleBackColor = false;
+                button.FlatAppearance.BorderColor = primary ? Primary : Border;
+                button.FlatAppearance.BorderSize = navigation || primary ? 0 : 1;
+                button.FlatAppearance.MouseOverBackColor = primary ? PrimaryHover : Hover;
+                button.FlatAppearance.MouseDownBackColor = primary ? PrimaryHover : Selected;
+                button.BackColor = primary ? Primary : (navigation ? Sidebar : Surface);
+                button.ForeColor = primary ? Color.White : Text;
                 button.Cursor = Cursors.Hand;
-                button.Font = BodyFont;
-                button.Padding = navigationButton ? new Padding(12, 0, 8, 0) : new Padding(8, 2, 8, 2);
+                button.Font = primary ? BodyBoldFont : BodyFont;
+                button.Padding = navigation ? new Padding(14, 0, 8, 0) : new Padding(12, 3, 12, 3);
+                button.Resize -= RoundButtonOnResize;
+                button.Resize += RoundButtonOnResize;
+                SetRoundedRegion(button, 10);
+            }
+
+            var badge = root as Label;
+            if (badge != null && String.Equals(badge.Tag as string, "badge", StringComparison.Ordinal))
+            {
+                badge.Resize -= RoundBadgeOnResize;
+                badge.Resize += RoundBadgeOnResize;
+                SetRoundedRegion(badge, 10);
             }
 
             var textBox = root as TextBox;
             if (textBox != null)
             {
-                bool guide = String.Equals(textBox.Tag as string, "guide", StringComparison.Ordinal);
-                textBox.BorderStyle = guide ? BorderStyle.None : BorderStyle.FixedSingle;
-                textBox.BackColor = Surface;
+                string kind = textBox.Tag as string;
+                textBox.BorderStyle = kind == "guide" || kind == "warning"
+                    ? BorderStyle.None : BorderStyle.FixedSingle;
+                textBox.BackColor = kind == "warning" ? Warning : Surface;
                 textBox.ForeColor = Text;
             }
 
@@ -103,6 +173,90 @@ namespace PortableUwfManager
             foreach (Control child in root.Controls)
             {
                 Apply(child);
+            }
+        }
+    }
+
+    // Painted rather than using bitmap assets, so gradients remain crisp at any DPI.
+    internal sealed class PastelGradientPanel : Panel
+    {
+        private readonly Color first;
+        private readonly Color middle;
+        private readonly Color last;
+        private readonly int cornerRadius;
+
+        public PastelGradientPanel(Color first, Color middle, Color last, int cornerRadius)
+        {
+            this.first = first;
+            this.middle = middle;
+            this.last = last;
+            this.cornerRadius = cornerRadius;
+            BackColor = first;
+            DoubleBuffered = true;
+            ResizeRedraw = true;
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (cornerRadius > 0)
+            {
+                UiTheme.SetRoundedRegion(this, cornerRadius);
+            }
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            if (ClientSize.Width < 2 || ClientSize.Height < 2)
+            {
+                base.OnPaintBackground(e);
+                return;
+            }
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var brush = new LinearGradientBrush(ClientRectangle, first, last, LinearGradientMode.Horizontal))
+            {
+                brush.InterpolationColors = new ColorBlend
+                {
+                    Colors = new[] { first, middle, last },
+                    Positions = new[] { 0F, 0.53F, 1F }
+                };
+                using (var path = UiTheme.RoundedPath(ClientRectangle, cornerRadius))
+                {
+                    e.Graphics.FillPath(brush, path);
+                }
+            }
+        }
+    }
+
+    internal sealed class SoftCardPanel : Panel
+    {
+        public SoftCardPanel()
+        {
+            BackColor = UiTheme.Surface;
+            DoubleBuffered = true;
+            ResizeRedraw = true;
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            UiTheme.SetRoundedRegion(this, 14);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            if (Width < 2 || Height < 2)
+            {
+                return;
+            }
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var path = UiTheme.RoundedPath(new Rectangle(0, 0, Width - 1, Height - 1), 14))
+            using (var pen = new Pen(UiTheme.Border))
+            {
+                e.Graphics.DrawPath(pen, path);
             }
         }
     }
@@ -179,7 +333,7 @@ namespace PortableUwfManager
             subtitle.TextAlign = ContentAlignment.MiddleLeft;
             heading.Controls.Add(subtitle, 0, 1);
 
-            var warningPanel = new Panel();
+            var warningPanel = new SoftCardPanel();
             warningPanel.Dock = DockStyle.Fill;
             warningPanel.Padding = new Padding(12, 8, 12, 8);
             warningPanel.BackColor = UiTheme.Warning;
@@ -193,6 +347,7 @@ namespace PortableUwfManager
             warningText.WordWrap = true;
             warningText.BorderStyle = BorderStyle.None;
             warningText.BackColor = UiTheme.Warning;
+            warningText.Tag = "warning";
             warningText.ForeColor = UiTheme.Text;
             warningText.Text = String.IsNullOrWhiteSpace(plan.Warning)
                 ? UiText.T("이 작업은 UWF 설정을 변경하며 관리자 권한이 필요합니다.", "This operation changes UWF settings and requires administrator rights.")
@@ -246,6 +401,7 @@ namespace PortableUwfManager
             continueButton.ForeColor = Color.White;
             continueButton.FlatStyle = FlatStyle.Flat;
             continueButton.FlatAppearance.BorderSize = 0;
+            continueButton.Tag = "primary";
 
             var cancelButton = new Button();
             cancelButton.Text = UiText.T("취소", "Cancel");
@@ -259,6 +415,7 @@ namespace PortableUwfManager
             CancelButton = cancelButton;
             warningText.SelectionStart = 0;
             ActiveControl = cancelButton;
+            UiTheme.Apply(this);
         }
 
         private static string BuildCommandList(OperationPlan plan)
@@ -297,8 +454,11 @@ namespace PortableUwfManager
         public VolumeSelectionDialog(List<string> volumes, string currentText)
         {
             Text = UiText.T("보호 볼륨 선택", "Select protected volumes");
-            Width = 380;
-            Height = 360;
+            Width = 420;
+            Height = 400;
+            Font = UiTheme.BodyFont;
+            BackColor = UiTheme.Canvas;
+            AutoScaleMode = AutoScaleMode.Dpi;
             MinimizeBox = false;
             MaximizeBox = false;
             ShowInTaskbar = false;
@@ -307,7 +467,7 @@ namespace PortableUwfManager
 
             var root = new TableLayoutPanel();
             root.Dock = DockStyle.Fill;
-            root.Padding = new Padding(12);
+            root.Padding = new Padding(22);
             root.ColumnCount = 1;
             root.RowCount = 4;
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
@@ -343,6 +503,7 @@ namespace PortableUwfManager
             ok.Text = UiText.T("확인", "OK");
             ok.Width = 90;
             ok.DialogResult = DialogResult.None;
+            ok.Tag = "primary";
             var cancel = new Button();
             cancel.Text = UiText.T("취소", "Cancel");
             cancel.Width = 90;
@@ -378,6 +539,7 @@ namespace PortableUwfManager
             };
 
             ApplyCurrentSelection(currentText);
+            UiTheme.Apply(this);
         }
 
         public static string BuildSelectionText(bool all, IList<string> volumes)

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portable UWF Manager · Pastel GUI Preview</title>
+<style>
+:root { --canvas:#f9f8fb; --surface:#fff; --ink:#312d3f; --muted:#6e6b7d; --primary:#675290; --border:#e4deeb; --selected:#e7def7; --shadow:0 12px 35px #64548010 }
+*{box-sizing:border-box} body{margin:0;background:#ede9f2;font-family:"Segoe UI","Malgun Gothic",Arial,sans-serif;color:var(--ink)}
+.app{display:flex;width:min(1400px,100%);min-height:100vh;margin:auto;background:var(--canvas);box-shadow:0 12px 70px #3b2b5420}
+aside{width:230px;flex:0 0 230px;background:linear-gradient(155deg,#f5f0fa,#f8f2fb 46%,#fdf7f4 100%);padding:30px 18px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:13px;margin:0 0 42px 2px;font-weight:700;font-size:19px;letter-spacing:-.6px;white-space:nowrap}
+.brand .mark{width:47px;height:47px;border-radius:12px;background:#e8dcf9;color:var(--primary);font:bold 30px/47px Georgia,serif;text-align:center}
+nav{display:flex;flex-direction:column;gap:8px} nav button{font:600 14px "Segoe UI","Malgun Gothic",sans-serif;appearance:none;background:none;border:0;text-align:left;padding:14px 18px;border-radius:11px;color:#575365;cursor:pointer}
+nav button.active{background:var(--selected);color:var(--primary);font-weight:700}nav button:hover:not(.active){background:#f0e9f8}
+nav button .glyph{display:inline-block;width:27px;font-size:18px;vertical-align:-1px;opacity:.8}
+.aside-foot{margin-top:auto;color:#8d8499;font-size:12px;padding:10px 9px;line-height:1.6}
+main{flex:1;padding:28px 30px 24px;min-width:0;display:flex;flex-direction:column}
+.hero{border-radius:19px;min-height:114px;background:linear-gradient(105deg,#e8dcf9,#fbe6ee 56%,#fff4de);padding:22px 25px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.hero h1{font-size:27px;line-height:1.3;letter-spacing:-.9px;margin:0 0 11px;font-weight:700}.hero p{color:#645d72;font-size:13px;margin:0}
+.hero .actions{display:flex;gap:10px;align-items:center}.hero select{font:13px inherit;padding:10px 9px;color:#56495d;border:1px solid #dfd1e3;background:#fff9;border-radius:9px}.hero button{white-space:nowrap;font-size:13px}
+button.secondary{cursor:pointer;border:1px solid var(--border);border-radius:10px;color:var(--ink);background:#fff;padding:10px 17px;font-weight:600;font-family:inherit}
+button.primary{cursor:pointer;border:0;border-radius:10px;color:#fff;background:var(--primary);padding:12px 18px;font-weight:650;font-family:inherit;box-shadow:0 5px 12px #67529022}
+button.secondary:hover{background:#f8f4fc} button.primary:hover{background:#55407d}
+.badges{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:17px 0 20px}.badge{padding:9px 13px;background:#f1edf7;font-weight:650;font-size:12px;border-radius:10px;color:#625673}
+.main-grid{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;flex:1;min-height:410px}
+.cards{display:grid;grid-template-rows:minmax(196px, 1fr) minmax(226px,1.5fr);gap:16px}
+.card{border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:27px 28px;box-shadow:var(--shadow)}
+.card .kicker{color:var(--primary);font-size:11px;font-weight:800;letter-spacing:1.4px;margin-bottom:10px}
+.card h2{margin:0 0 14px;font-size:20px;letter-spacing:-.6px}.card p{margin:9px 0;color:#6b6778;line-height:1.8;font-size:13.5px}
+.card .num{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:7px;background:#f1eafb;font-weight:800;color:#7f669f;font-size:12px;margin-right:9px}
+.card .line{margin-top:10px}
+.card .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card .tile{border:1px solid #f0eaf4;border-radius:12px;background:#fdfbfe;padding:16px}.card .tile h3{margin:0 0 7px;font-size:13px}.card .tile p{margin:0;line-height:1.7}
+.card .muted{color:var(--muted)}
+.aside-actions{display:flex;flex-direction:column;gap:12px}.aside-actions button{width:100%;text-align:left;min-height:44px}
+.side-panel{display:flex;flex-direction:column;gap:12px}.soft-note{background:#fff6e8;border:1px solid #f4eada;padding:20px;border-radius:14px;color:#8d7257;font-size:12px;line-height:1.85}
+.footer{margin-top:16px;border-top:1px solid #ebe7ef;color:#9990a1;font-size:11px;padding-top:12px;display:flex;justify-content:space-between;gap:10px}
+.demo-label{color:#9f859a;font-size:11px} .hidden{display:none} .settings{display:grid;grid-template-columns:170px 1fr;gap:18px 22px;align-items:center;font-size:13px}.settings label{color:var(--muted);font-weight:600}.settings .field{height:39px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+@media(max-width:1000px){aside{width:190px;flex-basis:190px}.brand{font-size:15px}main{padding:20px}.main-grid{grid-template-columns:1fr 190px}.hero h1{font-size:23px}.hero{padding:20px}.cards{grid-template-rows:auto auto}}
+@media(max-width:730px){aside{width:76px;flex-basis:76px;padding:20px 10px}.brand{margin-left:4px}.brand .name,nav button .navtext,.aside-foot{display:none}nav button{text-align:center;padding:13px 8px}.main-grid{grid-template-columns:1fr}.aside-actions{flex-direction:row;flex-wrap:wrap}.hero{display:block}.hero .actions{margin-top:12px}.card .split{grid-template-columns:1fr}.card{padding:19px}main{padding:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside><div class="brand"><span class="mark">U</span><span class="name">UWF Manager</span></div>
+<nav id="nav">
+<button class="active" data-page="0"><span class="glyph">⌂</span><span class="navtext">홈</span></button>
+<button data-page="1"><span class="glyph">◫</span><span class="navtext">상태</span></button>
+<button data-page="2"><span class="glyph">⚙</span><span class="navtext">설정</span></button>
+<button data-page="3"><span class="glyph">▤</span><span class="navtext">예외</span></button>
+<button data-page="4"><span class="glyph">✦</span><span class="navtext">고급</span></button>
+<button data-page="5"><span class="glyph">◷</span><span class="navtext">활동 기록</span></button>
+</nav><div class="aside-foot">Windows UWF tools<br>PASTEL EDITION</div></aside>
+<main><header class="hero">
+<div><h1 id="title">처음 시작하기</h1><p id="desc">기본 상태를 확인하고 권장 설정을 선택합니다.</p></div>
+<div class="actions"><select aria-label="language"><option>한국어</option><option>English</option></select><button class="secondary" type="button">관리자 실행</button></div>
+</header>
+<div class="badges"><span class="badge">◉ 일반 권한</span><span class="badge">◎ UWF 상태 확인 필요</span><span class="badge">Windows · 예시 화면</span></div>
+<div id="home" class="main-grid">
+<div class="cards">
+<section class="card"><div class="kicker">GETTING STARTED</div><h2>차분하게, 하나씩.</h2><div class="line"><span class="num">01</span>UWF 기능 및 관리자 권한 상태 확인</div><div class="line"><span class="num">02</span>사용 환경에 맞는 RAM / DISK 오버레이 선택</div><div class="line"><span class="num">03</span>적용 계획 검토 후 안전하게 설정</div></section>
+<section class="card"><div class="kicker">RECOMMENDED SETUP</div><h2>환경에 맞는 보호 설정</h2><div class="split"><div class="tile"><h3>RAM 모드</h3><p>가볍고 관리가 단순한 기본 추천 방식입니다. 재시작 시 임시 변경은 사라집니다.</p></div><div class="tile"><h3>DISK 모드</h3><p>게임·패치 등 쓰기량이 큰 작업에 적합합니다. 시스템 볼륨 여유 공간을 고려하세요.</p></div></div><p style="margin-top:14px" class="muted">적용 전에 항상 명령과 경고를 검토할 수 있습니다.</p></section>
+</div><div class="side-panel"><div class="aside-actions"><button class="primary">상태 확인　↗</button><button class="secondary">관리자 실행　↗</button><button class="secondary">UWF 기능 설치　↗</button><button class="secondary">RAM 추천값</button><button class="secondary">DISK 추천값</button><button class="secondary" id="goSetup">설정 화면으로 이동　→</button></div><div class="soft-note">✧ 중요 변경 작업은<br>실행 계획 확인 후 진행하세요.<br>이 페이지는 스타일 시안입니다.</div></div>
+</div>
+<div id="secondary" class="hidden main-grid"><div class="card" style="min-height:430px"><div class="kicker" id="secondaryKicker">PROTECTION SETUP</div><h2 id="secondaryTitle">보호 설정</h2><div class="settings" id="fields"><label>오버레이 유형</label><div class="field">RAM　⌄</div><label>보호 볼륨</label><div class="field">C:</div><label>오버레이 크기</label><div class="field">4,096 MB</div><label>경고 임계값</label><div class="field">80%</div><label>위험 임계값</label><div class="field">95%</div></div></div><div class="side-panel"><div class="aside-actions"><button class="primary">계획 검토</button><button class="secondary">RAM 추천값</button><button class="secondary">DISK 추천값</button></div><div class="soft-note">여기는 인터랙션과 배치를 확인하는 목업입니다. 실제 UWF 명령은 실행하지 않습니다.</div></div></div>
+<div class="footer"><span>작업 변경은 계획 검토 후 실행됩니다.</span><span class="demo-label">DESIGN PREVIEW · 실제 시스템 상태 아님</span></div>
+</main></div>
+<script>
+const pages=[["처음 시작하기","기본 상태를 확인하고 권장 설정을 선택합니다.","GETTING STARTED"],["UWF 상태","현재 설정과 다음 세션 설정을 확인합니다.","STATUS OVERVIEW"],["보호 설정","오버레이 유형, 크기, 보호 볼륨을 설정합니다.","PROTECTION SETUP"],["예외 관리","유지할 파일과 레지스트리 경로를 관리합니다.","EXCLUSION MANAGEMENT"],["고급 작업","영구 커밋, 서비스 모드 및 복구 작업을 진행합니다.","ADVANCED ACTIONS"],["활동 기록","최근 명령 결과와 작업 내역을 확인합니다.","ACTIVITY"]];
+function selectPage(i){document.querySelectorAll('#nav button').forEach((b,k)=>b.classList.toggle('active',i===k));document.getElementById('title').textContent=pages[i][0];document.getElementById('desc').textContent=pages[i][1];document.getElementById('home').classList.toggle('hidden',i!==0);document.getElementById('secondary').classList.toggle('hidden',i===0);document.getElementById('secondaryTitle').textContent=pages[i][0];document.getElementById('secondaryKicker').textContent=pages[i][2]}
+document.querySelectorAll('#nav button').forEach((b,i)=>b.addEventListener('click',()=>selectPage(i)));
+document.getElementById('goSetup').addEventListener('click',()=>selectPage(2));
+</script>
+</body></html>
